@@ -18,6 +18,7 @@ model User {
 
   donors   Donor[]
   profiles Profile[]
+  donations Donation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -56,10 +57,14 @@ model Donor {
 model Donation {
   id       Int      @id @default(autoincrement())
   lastDate DateTime
-  count    Int
+  count    Int @default(0)
 
   donorId Int
   donor   Donor @relation(fields: [donorId], references: [id])
+
+  userId    Int
+  user      User       @relation(fields: [userId], references: [id])
+
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
