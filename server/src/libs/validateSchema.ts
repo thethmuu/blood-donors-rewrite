@@ -55,3 +55,35 @@ export const validateUpdateDonorFields = checkSchema({
     isInt: { options: { min: 1 } },
   },
 });
+
+// Donations
+
+export const validateAddDonationFields = checkSchema({
+  lastDate: {
+    notEmpty: true,
+    isISO8601: true,
+  },
+  donorId: {
+    notEmpty: true,
+    isInt: { options: { min: 1 } },
+  },
+  userId: {
+    notEmpty: true,
+    isInt: { options: { min: 1 } },
+  },
+});
+
+export const validateUpdateDonationFields = checkSchema({
+  lastDate: {
+    optional: true,
+    isISO8601: true,
+  },
+  donorId: {
+    optional: true,
+    isInt: { options: { min: 1 } },
+  },
+  userId: {
+    notEmpty: true,
+    isInt: { options: { min: 1 } },
+  },
+});
