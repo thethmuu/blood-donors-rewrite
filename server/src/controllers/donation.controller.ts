@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import prisma from "../libs/prisma";
+import { Prisma } from "@prisma/client";
 export async function getDonations(req: Request, res: Response) {
-  const { userId } = req.query;
+  const { userId, pageNumber, pageSize, search } = req.query;
 
   if (!userId) {
     return res
@@ -10,15 +11,40 @@ export async function getDonations(req: Request, res: Response) {
       .json({ message: "UserId is required!", success: false });
   }
 
+  const skip =
+    (parseInt(pageNumber as string) - 1) * parseInt(pageSize as string);
+  const take = parseInt(pageSize as string);
+
+  const donationFindOptions: Prisma.DonationFindManyArgs = {
+    skip: 0,
+    where: {
+      userId: parseInt(userId as string),
+    },
+    orderBy: [{ count: "desc" }, { createdAt: "desc" }],
+    include: { donor: true },
+  };
+
+  if (typeof skip === "number" && skip > 0) {
+    donationFindOptions.skip = skip;
+  }
+  if (take) {
+    donationFindOptions.take = take;
+  }
+
+  if (search) {
+    donationFindOptions.where.donor = {
+      name: {
+        contains: search as string,
+      },
+    };
+  }
+
   try {
-    const donations = await prisma.donation.findMany({
-      orderBy: [{ count: "desc" }, { createdAt: "desc" }],
-      where: { userId: parseInt(userId as string) },
-      include: { donor: true },
-    });
+    const donations = await prisma.donation.findMany(donationFindOptions);
 
     return res.status(200).json({ donations, success: true });
   } catch (error) {
+    console.log(error);
     return res
       .status(500)
       .json({ message: "Something went wrong!", success: false });
