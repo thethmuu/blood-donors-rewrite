@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import prisma from "../libs/prisma";
+import { Prisma } from "@prisma/client";
 export async function getDonors(req: Request, res: Response) {
-  const { userId } = req.query;
+  const { userId, pageSize, pageNumber, search } = req.query;
 
   if (!userId) {
     return res
@@ -10,11 +11,33 @@ export async function getDonors(req: Request, res: Response) {
       .json({ message: "UserId is required!", success: false });
   }
 
+  const skip =
+    (parseInt(pageNumber as string) - 1) * parseInt(pageSize as string);
+  const take = parseInt(pageSize as string);
+
+  const donorFindOptions: Prisma.DonorFindManyArgs = {
+    skip: 0,
+    where: {
+      userId: parseInt(userId as string),
+    },
+    orderBy: [{ createdAt: "desc" }],
+  };
+
+  if (typeof skip === "number" && skip > 0) {
+    donorFindOptions.skip = skip;
+  }
+  if (take) {
+    donorFindOptions.take = take;
+  }
+
+  if (search) {
+    donorFindOptions.where.name = {
+      contains: search as string,
+    };
+  }
+
   try {
-    const donors = await prisma.donor.findMany({
-      orderBy: [{ createdAt: "desc" }],
-      where: { userId: parseInt(userId as string) },
-    });
+    const donors = await prisma.donor.findMany(donorFindOptions);
 
     return res.status(200).json({ donors, success: true });
   } catch (error) {
