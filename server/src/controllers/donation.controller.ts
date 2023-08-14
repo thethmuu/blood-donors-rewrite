@@ -42,9 +42,20 @@ export async function getDonations(req: Request, res: Response) {
   try {
     const donations = await prisma.donation.findMany(donationFindOptions);
 
-    return res.status(200).json({ donations, success: true });
+    const totalCount = await prisma.donation.count({
+      where: {
+        userId: parseInt(userId as string),
+        donor: {
+          name: {
+            contains: search as string,
+          },
+        },
+      },
+    });
+    const pageCount = Math.ceil(totalCount / take);
+
+    return res.status(200).json({ donations, pageCount, success: true });
   } catch (error) {
-    console.log(error);
     return res
       .status(500)
       .json({ message: "Something went wrong!", success: false });
