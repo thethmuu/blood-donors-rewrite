@@ -1,4 +1,4 @@
-import { authenticatedRequest } from "@/lib/axios";
+import { authenticatedRequest } from "@/libs/axios";
 
 const deleteDonor = async (id: number) => {
   try {

@@ -1,18 +1,18 @@
 import React from "react";
 
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import LinkItem from "./LinkItem";
 
 const Links = [
-  { name: "အလှူရှင်အားလုံး", src: "/dashboard" },
-  { name: "ယခုလှူနိုင်သူများ", src: "/dashboard/donors/avaliable" },
-  { name: "အလှူရှင်အသစ်", src: "/dashboard/donors/create" },
-  { name: "လှူဒါန်းမှူအသစ်", src: "/dashboard/donations/create" },
+  { name: "အလှူရှင်အားလုံး", src: "/donors" },
+  { name: "ယခုလှူနိုင်သူများ", src: "/donors/avaliable" },
+  { name: "အလှူရှင်အသစ်", src: "/donors/create" },
+  { name: "လှူဒါန်းမှူအသစ်", src: "/donations/create" },
 ];
 
-const Navbar = () => {
+const DashboardNavbar = () => {
   return (
-    <nav className="h-20 text-white bg-primary">
+    <nav className="h-20 min-h-[5rem] text-white bg-primary">
       <div className="container flex items-center justify-between h-full mx-auto">
         <h2 className="text-2xl font-semibold">Blood Donors</h2>
 
@@ -30,4 +30,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default DashboardNavbar;

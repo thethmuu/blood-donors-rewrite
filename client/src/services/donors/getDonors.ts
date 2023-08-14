@@ -1,4 +1,4 @@
-import { authenticatedRequest } from "@/lib/axios";
+import { authenticatedRequest } from "@/libs/axios";
 import { GetDonorProps } from "@/types/donor";
 
 const getDonors = async ({
