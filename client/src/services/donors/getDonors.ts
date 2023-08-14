@@ -1,8 +1,20 @@
 import { authenticatedRequest } from "@/lib/axios";
+import { GetDonorProps } from "@/types/donor";
 
-const getDonors = async () => {
+const getDonors = async ({
+  userId,
+  pageNumber,
+  pageSize,
+  search,
+}: GetDonorProps) => {
+  let query = `userId=${userId}&pageNumber=${pageNumber}&pageSize=${pageSize}`;
+
+  if (search) {
+    query += `&search=${search}`;
+  }
+
   try {
-    const response = await authenticatedRequest("/donors?userId=1");
+    const response = await authenticatedRequest(`/donors?${query}`);
 
     return response.data;
   } catch (error: any) {

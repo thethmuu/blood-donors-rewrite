@@ -1,23 +1,67 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-import Loading from "@/conponents/Loading";
-import { DataTable } from "@/conponents/dashboard/data-table";
-import { columns } from "@/conponents/dashboard/columns";
+import Loading from "@/components/Loading";
+import { DataTable } from "@/components/dashboard/data-table";
+import { columns } from "@/components/dashboard/columns";
+import Pagination from "@/components/dashboard/Pagination";
+import TableActions from "@/components/TableActions";
 
 import useDonors from "@/hooks/donors/useDonors";
 
 const Dashboard = () => {
-  const { data, isLoading, isError, refetch, error } = useDonors();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+  const [pageSize, setpageSize] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  if (isLoading) {
-    return <Loading />;
-  }
+  const { data, isLoading, isError, refetch, error, isSuccess } = useDonors({
+    userId: "1",
+    pageNumber: currentPage,
+    pageSize,
+    search: searchQuery,
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      setPageCount(data.pageCount);
+    }
+  }, [isSuccess, pageCount, currentPage, data]);
+
+  const handlePageChange = (currentPage: number) => {
+    setCurrentPage(currentPage);
+  };
+
+  const handlePageSizeChange = (e: number) => {
+    setpageSize(e);
+  };
 
   return (
-    <section className="container py-10 grow">
-      <DataTable columns={columns} data={data.donors} />
+    <section className="py-10 overflow-y-scroll grow">
+      <div className="container space-y-6">
+        <TableActions
+          handlePageSizeChange={handlePageSizeChange}
+          pageSize={pageSize}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+
+        {!isLoading ? (
+          <>
+            <DataTable columns={columns} data={data.donors} />
+            {pageCount > 0 ? (
+              <Pagination
+                pageCount={pageCount}
+                handlePageChange={handlePageChange}
+                forcePage={currentPage - 1}
+              />
+            ) : null}
+          </>
+        ) : (
+          <Loading />
+        )}
+      </div>
     </section>
   );
 };
