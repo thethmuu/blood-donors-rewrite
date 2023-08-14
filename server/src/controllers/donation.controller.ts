@@ -3,13 +3,9 @@ import { validationResult } from "express-validator";
 import prisma from "../libs/prisma";
 import { Prisma } from "@prisma/client";
 export async function getDonations(req: Request, res: Response) {
-  const { userId, pageNumber, pageSize, search } = req.query;
+  const { pageNumber, pageSize, search } = req.query;
 
-  if (!userId) {
-    return res
-      .status(400)
-      .json({ message: "UserId is required!", success: false });
-  }
+  const userId = req.user.id;
 
   const skip =
     (parseInt(pageNumber as string) - 1) * parseInt(pageSize as string);
@@ -18,7 +14,7 @@ export async function getDonations(req: Request, res: Response) {
   const donationFindOptions: Prisma.DonationFindManyArgs = {
     skip: 0,
     where: {
-      userId: parseInt(userId as string),
+      userId,
     },
     orderBy: [{ count: "desc" }, { createdAt: "desc" }],
     include: { donor: true },
@@ -44,7 +40,7 @@ export async function getDonations(req: Request, res: Response) {
 
     const totalCount = await prisma.donation.count({
       where: {
-        userId: parseInt(userId as string),
+        userId,
         donor: {
           name: {
             contains: search as string,
@@ -98,7 +94,8 @@ export async function addDonation(req: Request, res: Response) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { lastDate, donorId, userId } = req.body;
+  const { lastDate, donorId } = req.body;
+  const userId = req.user.id;
 
   const previousCount = await prisma.donation.count({ where: { donorId } });
 
@@ -137,14 +134,15 @@ export async function updateDonation(req: Request, res: Response) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { lastDate, donorId: newDonorId, userId } = req.body;
+  const { lastDate, donorId: newDonorId } = req.body;
+  const userId = req.user.id;
 
   const { donorId: previousDonorId, count: previousDonorCount } =
     await prisma.donation.findUnique({
       where: { id: parseInt(id) },
     });
 
-  let count;
+  let count: number;
 
   try {
     if (newDonorId !== previousDonorId) {
