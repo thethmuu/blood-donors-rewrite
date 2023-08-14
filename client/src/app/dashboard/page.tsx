@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 
-import Loading from "@/conponents/Loading";
-import { DataTable } from "@/conponents/dashboard/data-table";
-import { columns } from "@/conponents/dashboard/columns";
-import Pagination from "@/conponents/dashboard/Pagination";
-import TableActions from "@/conponents/TableActions";
+import Loading from "@/components/Loading";
+import { DataTable } from "@/components/dashboard/data-table";
+import { columns } from "@/components/dashboard/columns";
+import Pagination from "@/components/dashboard/Pagination";
+import TableActions from "@/components/TableActions";
 
 import useDonors from "@/hooks/donors/useDonors";
 
