@@ -39,7 +39,18 @@ export async function getDonors(req: Request, res: Response) {
   try {
     const donors = await prisma.donor.findMany(donorFindOptions);
 
-    return res.status(200).json({ donors, success: true });
+    const totalCount = await prisma.donor.count({
+      where: {
+        userId: parseInt(userId as string),
+        name: {
+          contains: search as string,
+        },
+      },
+    });
+
+    const pageCount = Math.ceil(totalCount / take);
+
+    return res.status(200).json({ donors, pageCount, success: true });
   } catch (error) {
     return res
       .status(500)
