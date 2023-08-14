@@ -1,5 +1,39 @@
 import { checkSchema } from "express-validator";
 
+// Auth
+
+export const validateRegisterUserFields = checkSchema({
+  name: {
+    notEmpty: true,
+    isString: true,
+  },
+  email: {
+    notEmpty: true,
+    isEmail: true,
+  },
+  password: {
+    notEmpty: true,
+    isLength: {
+      options: { min: 8 },
+      errorMessage: "Password should be at least 8 chars",
+    },
+  },
+});
+
+export const validateLogInUserFields = checkSchema({
+  email: {
+    notEmpty: true,
+    isEmail: true,
+  },
+  password: {
+    notEmpty: true,
+    isLength: {
+      options: { min: 8 },
+      errorMessage: "Password should be at least 8 chars",
+    },
+  },
+});
+
 // Donors
 
 export const validateAddDonorFields = checkSchema({
