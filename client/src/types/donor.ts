@@ -26,3 +26,10 @@ export interface UpdateDonor {
   dob: Date;
   userId: number;
 }
+
+export interface GetDonorProps {
+  userId: string;
+  pageNumber: number;
+  pageSize: number;
+  search: string;
+}

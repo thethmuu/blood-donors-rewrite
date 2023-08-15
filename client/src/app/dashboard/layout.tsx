@@ -1,4 +1,4 @@
-import Navbar from "@/conponents/dashboard/Navbar";
+import Navbar from "@/components/dashboard/Navbar";
 
 import QueryProvider from "@/providers/QueryProvider";
 
