@@ -3,13 +3,9 @@ import { validationResult } from "express-validator";
 import prisma from "../libs/prisma";
 import { Prisma } from "@prisma/client";
 export async function getDonors(req: Request, res: Response) {
-  const { userId, pageSize, pageNumber, search } = req.query;
+  const { pageSize, pageNumber, search } = req.query;
 
-  if (!userId) {
-    return res
-      .status(400)
-      .json({ message: "UserId is required!", success: false });
-  }
+  const userId = req.user.id;
 
   const skip =
     (parseInt(pageNumber as string) - 1) * parseInt(pageSize as string);
@@ -18,7 +14,7 @@ export async function getDonors(req: Request, res: Response) {
   const donorFindOptions: Prisma.DonorFindManyArgs = {
     skip: 0,
     where: {
-      userId: parseInt(userId as string),
+      userId,
     },
     orderBy: [{ createdAt: "desc" }],
   };
@@ -41,7 +37,7 @@ export async function getDonors(req: Request, res: Response) {
 
     const totalCount = await prisma.donor.count({
       where: {
-        userId: parseInt(userId as string),
+        userId,
         name: {
           contains: search as string,
         },
@@ -94,8 +90,8 @@ export async function addDonor(req: Request, res: Response) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { name, dob, phone, address, bloodType, userId } = req.body;
-
+  const { name, dob, phone, address, bloodType } = req.body;
+  const userId = req.user.id;
   try {
     await prisma.donor.create({
       data: {
@@ -131,8 +127,8 @@ export async function updateDonor(req: Request, res: Response) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { name, dob, phone, address, bloodType, userId } = req.body;
-
+  const { name, dob, phone, address, bloodType } = req.body;
+  const userId = req.user.id;
   try {
     await prisma.donor.update({
       where: {
