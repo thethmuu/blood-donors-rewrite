@@ -1,4 +1,4 @@
-import { authenticatedRequest } from "@/lib/axios";
+import { authenticatedRequest } from "@/libs/axios";
 import { UpdateDonor } from "@/types/donor";
 
 const updateDonor = async ({ id, data }: { id: number; data: UpdateDonor }) => {

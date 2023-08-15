@@ -2,6 +2,8 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 
 import "./globals.css";
+import LayoutProvider from "@/providers/LayoutProvider";
+import QueryProvider from "@/providers/QueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +23,9 @@ export default function RootLayout({
         className={`${inter.className} w-screen h-screen overflow-hidden`}
         suppressHydrationWarning={true}
       >
-        {children}
+        <QueryProvider>
+          <LayoutProvider>{children}</LayoutProvider>
+        </QueryProvider>
       </body>
     </html>
   );

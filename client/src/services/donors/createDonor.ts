@@ -1,4 +1,4 @@
-import { authenticatedRequest } from "@/lib/axios";
+import { authenticatedRequest } from "@/libs/axios";
 import { CreateDonor } from "@/types/donor";
 
 const createDonor = async (data: CreateDonor) => {

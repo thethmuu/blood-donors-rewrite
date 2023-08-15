@@ -1,13 +1,9 @@
 import React from "react";
 
-import Navbar from "@/components/Navbar";
-
 const Home = () => {
   return (
-    <main className="flex flex-col h-full">
-      <Navbar />
-
-      <section className="container flex flex-col items-center justify-center h-full gap-8 mx-auto">
+    <section className="py-10 overflow-y-auto grow">
+      <div className="container flex flex-col items-center justify-center h-full mx-auto sm:gap-8">
         <figure className="w-48 h-auto">
           <img src="/logo.png" alt="" className="object-cover w-full h-full" />
         </figure>
@@ -34,8 +30,8 @@ const Home = () => {
             </li>
           </ul>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
   );
 };
 

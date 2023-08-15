@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 
 import Loading from "@/components/Loading";
-import { DataTable } from "@/components/dashboard/data-table";
-import { columns } from "@/components/dashboard/columns";
-import Pagination from "@/components/dashboard/Pagination";
+import { DataTable } from "@/components/data-table";
+import { columns } from "@/components/donors/columns";
+import Pagination from "@/components/Pagination";
 import TableActions from "@/components/TableActions";
 
 import useDonors from "@/hooks/donors/useDonors";
@@ -38,7 +38,7 @@ const Dashboard = () => {
   };
 
   return (
-    <section className="py-10 overflow-y-scroll grow">
+    <section className="py-10 overflow-y-auto grow">
       <div className="container space-y-6">
         <TableActions
           handlePageSizeChange={handlePageSizeChange}
