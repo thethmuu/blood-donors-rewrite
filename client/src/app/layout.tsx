@@ -2,6 +2,9 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 
 import "./globals.css";
+
+import { Toaster } from "@/components/ui/toaster";
+
 import LayoutProvider from "@/providers/LayoutProvider";
 import QueryProvider from "@/providers/QueryProvider";
 
@@ -25,6 +28,8 @@ export default function RootLayout({
       >
         <QueryProvider>
           <LayoutProvider>{children}</LayoutProvider>
+
+          <Toaster />
         </QueryProvider>
       </body>
     </html>
