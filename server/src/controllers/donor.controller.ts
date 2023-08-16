@@ -73,7 +73,11 @@ export async function getDonor(req: Request, res: Response) {
       where: {
         id: parseInt(id),
       },
-      include: { donations: true },
+      include: {
+        donations: {
+          orderBy: { createdAt: "desc" },
+        },
+      },
     });
 
     if (!donor) {
