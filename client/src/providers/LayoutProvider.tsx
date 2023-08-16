@@ -11,7 +11,11 @@ const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main className="flex flex-col w-full h-full overflow-hidden">
-      {currentPath === "/" ? <Navbar /> : <DashboardNavbar />}
+      {currentPath === "/" || currentPath === "/login" ? (
+        <Navbar />
+      ) : (
+        <DashboardNavbar />
+      )}
       {children}
     </main>
   );
