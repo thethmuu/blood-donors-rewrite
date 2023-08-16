@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 
-import useIsAutherized from "@/hooks/auth/useIsAutherized";
+import useIsAuthorized from "@/hooks/auth/useIsAuthorized";
 
 const Navbar = () => {
-  const { data: isAutherized, isLoading } = useIsAutherized();
+  const { data: isAuthorized, isLoading } = useIsAuthorized();
 
   return (
     <nav className="h-20 min-h-[5rem] text-white bg-primary">
@@ -13,7 +13,7 @@ const Navbar = () => {
           Blood Donors
         </Link>
 
-        {!isLoading && isAutherized ? (
+        {!isLoading && isAuthorized ? (
           <Link
             className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-black rounded-sm bg-secondary hover:bg-secondary/90 h-9"
             href="/donors"

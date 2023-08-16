@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const isAutherized = async () => {
+const isAuthorized = async () => {
   try {
     const response = await axios.get("/api/isAutherized");
 
@@ -10,4 +10,4 @@ const isAutherized = async () => {
   }
 };
 
-export default isAutherized;
+export default isAuthorized;
