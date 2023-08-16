@@ -87,6 +87,29 @@ export async function getDonation(req: Request, res: Response) {
   }
 }
 
+export async function getDonorsForDonations(req: Request, res: Response) {
+  const userId = req.user.id;
+
+  try {
+    const donors = await prisma.donor.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return res.status(200).json({ donors, success: true });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Something went wrong!", success: false });
+  }
+}
+
 export async function addDonation(req: Request, res: Response) {
   const errors = validationResult(req);
 

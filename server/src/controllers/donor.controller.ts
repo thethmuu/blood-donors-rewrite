@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import prisma from "../libs/prisma";
 import { Prisma } from "@prisma/client";
 export async function getDonors(req: Request, res: Response) {
-  const { pageSize, pageNumber, search } = req.query;
+  const { pageSize, pageNumber, search, bloodType } = req.query;
 
   const userId = req.user.id;
 
@@ -19,6 +19,15 @@ export async function getDonors(req: Request, res: Response) {
     orderBy: [{ createdAt: "desc" }],
   };
 
+  const totalCountFindOptions: Prisma.DonorCountArgs = {
+    where: {
+      userId,
+      name: {
+        contains: search as string,
+      },
+    },
+  };
+
   if (typeof skip === "number" && skip > 0) {
     donorFindOptions.skip = skip;
   }
@@ -32,17 +41,15 @@ export async function getDonors(req: Request, res: Response) {
     };
   }
 
+  if (bloodType) {
+    donorFindOptions.where.bloodType = bloodType as string;
+    totalCountFindOptions.where.bloodType = bloodType as string;
+  }
+
   try {
     const donors = await prisma.donor.findMany(donorFindOptions);
 
-    const totalCount = await prisma.donor.count({
-      where: {
-        userId,
-        name: {
-          contains: search as string,
-        },
-      },
-    });
+    const totalCount = await prisma.donor.count(totalCountFindOptions);
 
     const pageCount = Math.ceil(totalCount / take);
 
@@ -66,7 +73,11 @@ export async function getDonor(req: Request, res: Response) {
       where: {
         id: parseInt(id),
       },
-      include: { donations: true },
+      include: {
+        donations: {
+          orderBy: { createdAt: "desc" },
+        },
+      },
     });
 
     if (!donor) {

@@ -5,17 +5,18 @@ import {
   getDonations,
   updateDonation,
   removeDonation,
+  getDonorsForDonations,
 } from "../controllers/donation.controller";
 import {
   validateAddDonationFields,
-  validateAddDonorFields,
   validateUpdateDonationFields,
-  validateUpdateDonorFields,
 } from "../libs/validateSchema";
 
 const router = Router();
 
 router.get("/", getDonations);
+
+router.get("/donors", getDonorsForDonations);
 
 router.get("/:id", getDonation);
 

@@ -57,10 +57,6 @@ export const validateAddDonorFields = checkSchema({
     notEmpty: true,
     isIn: { options: [["A", "B", "O", "AB", "-A", "-B", "-O", "-AB"]] },
   },
-  userId: {
-    notEmpty: true,
-    isInt: { options: { min: 1 } },
-  },
 });
 
 export const validateUpdateDonorFields = checkSchema({
@@ -84,10 +80,6 @@ export const validateUpdateDonorFields = checkSchema({
     optional: true,
     isIn: { options: [["A", "B", "O", "AB", "-A", "-B", "-O", "-AB"]] },
   },
-  userId: {
-    notEmpty: true,
-    isInt: { options: { min: 1 } },
-  },
 });
 
 // Donations
@@ -101,10 +93,6 @@ export const validateAddDonationFields = checkSchema({
     notEmpty: true,
     isInt: { options: { min: 1 } },
   },
-  userId: {
-    notEmpty: true,
-    isInt: { options: { min: 1 } },
-  },
 });
 
 export const validateUpdateDonationFields = checkSchema({
@@ -114,10 +102,6 @@ export const validateUpdateDonationFields = checkSchema({
   },
   donorId: {
     optional: true,
-    isInt: { options: { min: 1 } },
-  },
-  userId: {
-    notEmpty: true,
     isInt: { options: { min: 1 } },
   },
 });

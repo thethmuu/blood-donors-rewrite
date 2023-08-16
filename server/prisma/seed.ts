@@ -49,6 +49,7 @@ async function createDonor() {
       bloodType: faker.helpers.arrayElement(bloodTypes),
       phone: faker.phone.number("09#########"),
       address: faker.location.city(),
+      dob: faker.date.birthdate({ min: 18, max: 65, mode: "age" }),
       userId: faker.helpers.arrayElement(userIds),
     },
   });
