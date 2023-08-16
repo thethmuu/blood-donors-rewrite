@@ -17,6 +17,7 @@ interface TableActionsProps {
   pageSize: number;
   searchQuery: string;
   setSearchQuery: (data: string) => void;
+  setCurrentPage: (data: number) => void;
 }
 
 const TableActions = ({
@@ -24,6 +25,7 @@ const TableActions = ({
   pageSize,
   searchQuery,
   setSearchQuery,
+  setCurrentPage,
 }: TableActionsProps) => {
   const [isMounted, setIsMounted] = useState(false);
   const [searchData, setSearchData] = useState(searchQuery);
@@ -35,10 +37,11 @@ const TableActions = ({
   useEffect(() => {
     const query = setTimeout(() => {
       setSearchQuery(searchData);
+      setCurrentPage(1);
     }, 500);
 
     return () => clearTimeout(query);
-  }, [searchData, setSearchQuery]);
+  }, [searchData, setSearchQuery, setCurrentPage]);
 
   if (!isMounted) {
     return;

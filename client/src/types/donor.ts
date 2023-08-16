@@ -16,7 +16,6 @@ export interface CreateDonor {
   phone: string;
   address: string;
   bloodType: string;
-  userId: number;
 }
 
 export interface UpdateDonor {
@@ -24,11 +23,9 @@ export interface UpdateDonor {
   phone: string;
   address: string;
   dob: Date;
-  userId: number;
 }
 
 export interface GetDonorProps {
-  userId: string;
   pageNumber: number;
   pageSize: number;
   search: string;

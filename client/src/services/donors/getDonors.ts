@@ -1,13 +1,8 @@
 import { authenticatedRequest } from "@/libs/axios";
 import { GetDonorProps } from "@/types/donor";
 
-const getDonors = async ({
-  userId,
-  pageNumber,
-  pageSize,
-  search,
-}: GetDonorProps) => {
-  let query = `userId=${userId}&pageNumber=${pageNumber}&pageSize=${pageSize}`;
+const getDonors = async ({ pageNumber, pageSize, search }: GetDonorProps) => {
+  let query = `pageNumber=${pageNumber}&pageSize=${pageSize}`;
 
   if (search) {
     query += `&search=${search}`;
