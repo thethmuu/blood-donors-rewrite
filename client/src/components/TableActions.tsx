@@ -12,6 +12,8 @@ import {
 } from "./ui/select";
 import { Input } from "./ui/input";
 
+import useIsMounted from "@/hooks/useIsMounted";
+
 interface TableActionsProps {
   handlePageSizeChange: (e: number) => void;
   pageSize: number;
@@ -27,12 +29,9 @@ const TableActions = ({
   setSearchQuery,
   setCurrentPage,
 }: TableActionsProps) => {
-  const [isMounted, setIsMounted] = useState(false);
-  const [searchData, setSearchData] = useState(searchQuery);
+  const isMounted = useIsMounted();
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const [searchData, setSearchData] = useState(searchQuery);
 
   useEffect(() => {
     const query = setTimeout(() => {

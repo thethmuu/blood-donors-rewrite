@@ -18,7 +18,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
+
 import useLogin from "@/hooks/auth/useLogin";
+import useIsMounted from "@/hooks/useIsMounted";
 
 const loginFormSchema = z.object({
   email: z.string().email("Invalid email!"),
@@ -26,7 +28,8 @@ const loginFormSchema = z.object({
 });
 
 const Login = () => {
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useIsMounted();
+
   const { mutate, isError, isSuccess, isLoading, error, data } = useLogin();
   const { toast } = useToast();
 
@@ -35,10 +38,6 @@ const Login = () => {
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
   });
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   useEffect(() => {
     if (isSuccess) {
