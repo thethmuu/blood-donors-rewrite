@@ -17,7 +17,6 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data, isLoading, isError, refetch, error, isSuccess } = useDonors({
-    userId: "1",
     pageNumber: currentPage,
     pageSize,
     search: searchQuery,
@@ -45,6 +44,7 @@ const Dashboard = () => {
           pageSize={pageSize}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          setCurrentPage={setCurrentPage}
         />
 
         {!isLoading ? (
