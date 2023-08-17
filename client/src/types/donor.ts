@@ -12,7 +12,7 @@ export interface Donor {
 
 export interface CreateDonor {
   name: string;
-  dob: Date;
+  dob: string;
   phone: string;
   address: string;
   bloodType: string;
