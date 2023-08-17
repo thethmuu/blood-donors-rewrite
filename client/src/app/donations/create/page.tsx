@@ -35,7 +35,7 @@ interface donorProps {
   label: string;
 }
 
-const loginFormSchema = z.object({
+const donationCreateSchema = z.object({
   lastDate: z.date({
     required_error: "Last date is required.",
   }),
@@ -59,11 +59,11 @@ const DonationCreate = () => {
 
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof loginFormSchema>>({
-    resolver: zodResolver(loginFormSchema),
+  const form = useForm<z.infer<typeof donationCreateSchema>>({
+    resolver: zodResolver(donationCreateSchema),
   });
 
-  function onSubmit(values: z.infer<typeof loginFormSchema>) {
+  function onSubmit(values: z.infer<typeof donationCreateSchema>) {
     const { donorId, lastDate } = values;
     const formData = { donorId, lastDate: lastDate.toISOString() };
     mutate(formData);
