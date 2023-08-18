@@ -3,11 +3,11 @@
 import React, { useEffect } from "react";
 import Select from "react-select";
 import * as z from "zod";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 import {
   Form,
@@ -31,7 +31,8 @@ import Loading from "@/components/Loading";
 
 import { cn } from "@/libs/utils";
 
-import useCreateDonor from "@/hooks/donors/useCreateDonor";
+import useUpdateDonor from "@/hooks/donors/useUpdateDonor";
+import useDonor from "@/hooks/donors/useDonor";
 import useIsMounted from "@/hooks/useIsMounted";
 
 const BloodTypeOptions = [
@@ -67,9 +68,20 @@ const createFormSchema = z.object({
 });
 
 const CreateDonor = () => {
+  const currentPath = usePathname();
   const isMounted = useIsMounted();
 
-  const { mutate, isLoading, isError, isSuccess, error } = useCreateDonor();
+  const userId = currentPath.split("/").pop() || "";
+
+  const {
+    data,
+    isLoading: donorIsLoading,
+    isError: donorIsError,
+    isSuccess: donorIsSuccess,
+    error: donorError,
+  } = useDonor(parseInt(userId));
+
+  const { mutate, isError, isLoading, isSuccess, error } = useUpdateDonor();
 
   const { toast } = useToast();
 
@@ -80,12 +92,19 @@ const CreateDonor = () => {
   });
 
   useEffect(() => {
+    if (!donorIsLoading && donorIsSuccess) {
+      form.reset(data.donor);
+      form.setValue("dob", parseISO(data.donor.dob));
+    }
+  }, [donorIsLoading, donorIsSuccess, form, data]);
+
+  useEffect(() => {
     if (isSuccess) {
       toast({
-        description: "Successfully created!",
+        description: "Successfully updated!",
       });
 
-      router.push("/donors");
+      router.back();
     }
 
     if (isError) {
@@ -100,11 +119,14 @@ const CreateDonor = () => {
     const { name, address, dob, phone, bloodType } = values;
 
     mutate({
-      name,
-      address,
-      phone,
-      bloodType,
-      dob: dob.toISOString(),
+      id: parseInt(userId),
+      data: {
+        name,
+        address,
+        phone,
+        bloodType,
+        dob: dob.toISOString(),
+      },
     });
   };
 
@@ -258,7 +280,10 @@ const CreateDonor = () => {
               ) : null}
             </div>
 
-            <Button type="submit" className="text-sm font-semibold w-fit">
+            <Button
+              type="submit"
+              className="ml-auto text-sm font-semibold w-fit"
+            >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : null}
