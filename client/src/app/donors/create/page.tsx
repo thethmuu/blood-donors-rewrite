@@ -229,7 +229,7 @@ const CreateDonor = () => {
                 render={({ field }) => (
                   <Select
                     options={BloodTypeOptions}
-                    placeholder="Select a donor..."
+                    placeholder="Select a blood type..."
                     value={BloodTypeOptions.find(
                       ({ value }) => value === field.value
                     )}

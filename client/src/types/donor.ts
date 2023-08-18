@@ -29,4 +29,5 @@ export interface GetDonorProps {
   pageNumber: number;
   pageSize: number;
   search: string;
+  bloodType?: string;
 }

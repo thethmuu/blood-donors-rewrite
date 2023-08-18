@@ -14,12 +14,14 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
   const [pageSize, setpageSize] = useState(10);
+  const [bloodType, setBloodType] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data, isLoading, isError, refetch, error, isSuccess } = useDonors({
     pageNumber: currentPage,
     pageSize,
     search: searchQuery,
+    bloodType,
   });
 
   useEffect(() => {
@@ -32,12 +34,18 @@ const Dashboard = () => {
     setCurrentPage(currentPage);
   };
 
+  const handleBloodTypeChange = (type: string) => {
+    setBloodType(type);
+    setCurrentPage(1);
+  };
+
   const handlePageSizeChange = (e: number) => {
     setpageSize(e);
+    setCurrentPage(1);
   };
 
   return (
-    <section className="py-10 overflow-y-auto grow">
+    <section className="py-5 overflow-y-auto sm:py-10 grow">
       <div className="container space-y-6">
         <TableActions
           handlePageSizeChange={handlePageSizeChange}
@@ -45,6 +53,7 @@ const Dashboard = () => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           setCurrentPage={setCurrentPage}
+          handleBloodTypeChange={handleBloodTypeChange}
         />
 
         {!isLoading ? (
