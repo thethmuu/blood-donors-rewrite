@@ -7,16 +7,10 @@ import Select from "react-select";
 
 import useDonorsForDonation from "@/hooks/donations/useDonorsForDonation";
 
-import { format } from "date-fns";
-import { Calendar as CalendarIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import {
   Form,
   FormControl,
@@ -29,6 +23,7 @@ import Loading from "@/components/Loading";
 import useCreateDonation from "@/hooks/donations/useCreateDonation";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
 
 interface donorProps {
   value: number;
@@ -36,9 +31,7 @@ interface donorProps {
 }
 
 const donationCreateSchema = z.object({
-  lastDate: z.date({
-    required_error: "Last date is required.",
-  }),
+  lastDate: z.string().nonempty({ message: "Last date is required!" }),
   donorId: z.number({ required_error: "Please select a donor." }),
 });
 
@@ -65,7 +58,8 @@ const DonationCreate = () => {
 
   function onSubmit(values: z.infer<typeof donationCreateSchema>) {
     const { donorId, lastDate } = values;
-    const formData = { donorId, lastDate: lastDate.toISOString() };
+    const lastDateInISOFormat = new Date(lastDate).toISOString();
+    const formData = { donorId, lastDate: lastDateInISOFormat };
     mutate(formData);
   }
 
@@ -155,42 +149,14 @@ const DonationCreate = () => {
             <FormField
               control={form.control}
               name="lastDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col ">
-                  <FormLabel className="mb-4 font-semibold">
-                    နောက်ဆုံးလှူသည့်ရက်စွဲ (နှစ်-လ-ရက်)
+              render={() => (
+                <FormItem className="w-full space-y-4">
+                  <FormLabel className="font-semibold">
+                    နောက်ဆုံးလှူသည့်ရက်စွဲ (လ-ရက်-နှစ်)
                   </FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={`w-full py-[22px] text-md    justify-start  text-left font-normal ${
-                            field.value ? "text-muted-foreground" : ""
-                          }`}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-
+                  <FormControl>
+                    <Input type="date" {...form.register("lastDate")} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
