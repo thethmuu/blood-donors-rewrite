@@ -17,18 +17,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-
-import { cn } from "@/libs/utils";
 
 import useCreateDonor from "@/hooks/donors/useCreateDonor";
 import useIsMounted from "@/hooks/useIsMounted";
@@ -52,9 +45,7 @@ const createFormSchema = z.object({
   name: z
     .string()
     .nonempty({ message: "Name must contain at least 1 character(s)!" }),
-  dob: z.date({
-    required_error: "A date of birth is required!",
-  }),
+  dob: z.string().nonempty({ message: "A date of birth is required!" }),
   phone: z
     .string()
     .nonempty({ message: "Please add a phone number!" })
@@ -97,13 +88,16 @@ const CreateDonor = () => {
 
   const onSubmit = (values: z.infer<typeof createFormSchema>) => {
     const { name, address, dob, phone, bloodType } = values;
+    console.log(dob);
+
+    const dobInISOFormat = new Date(dob).toISOString();
 
     mutate({
       name,
       address,
       phone,
       bloodType,
-      dob: dob.toISOString(),
+      dob: dobInISOFormat,
     });
   };
 
@@ -138,42 +132,12 @@ const CreateDonor = () => {
               <FormField
                 control={form.control}
                 name="dob"
-                render={({ field }) => (
+                render={() => (
                   <FormItem className="w-1/2">
                     <FormLabel className="font-semibold">မွေးနေ့</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full px-3 py-1 h-9 justify-between font-normal flex items-center",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="w-4 h-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-
-                      <PopoverContent className="w-auto" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-
+                    <FormControl>
+                      <Input type="date" {...form.register("dob")} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
