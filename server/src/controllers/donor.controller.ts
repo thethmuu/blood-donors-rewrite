@@ -184,7 +184,7 @@ export async function removeDonor(req: Request, res: Response) {
 }
 
 export async function getAvaliableDonors(req: Request, res: Response) {
-  const { pageSize, pageNumber, search } = req.query;
+  const { pageSize, pageNumber, search, bloodType } = req.query;
 
   const userId = req.user.id;
 
@@ -225,6 +225,11 @@ export async function getAvaliableDonors(req: Request, res: Response) {
     avaliableDonorsFindOptions.where.name = {
       contains: search as string,
     };
+  }
+
+  if (bloodType) {
+    avaliableDonorsFindOptions.where.bloodType = bloodType as string;
+    totalCountFindOptions.where.bloodType = bloodType as string;
   }
 
   try {
