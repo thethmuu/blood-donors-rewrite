@@ -194,7 +194,7 @@ export async function getAvaliableDonors(req: Request, res: Response) {
 
   const fourMonthsAgo = new Date();
   fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
-  fourMonthsAgo.setHours(0, 0, 0, 0);
+  fourMonthsAgo.setUTCHours(0, 0, 0, 0);
 
   const avaliableDonorsFindOptions: Prisma.DonorFindManyArgs = {
     where: {
