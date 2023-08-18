@@ -5,6 +5,7 @@ import {
   addDonor,
   updateDonor,
   removeDonor,
+  getAvaliableDonors,
 } from "../controllers/donor.controller";
 import {
   validateAddDonorFields,
@@ -14,6 +15,8 @@ import {
 const router = Router();
 
 router.get("/", getDonors);
+
+router.get("/avaliable", getAvaliableDonors);
 
 router.get("/:id", getDonor);
 
