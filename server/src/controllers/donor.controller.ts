@@ -182,3 +182,66 @@ export async function removeDonor(req: Request, res: Response) {
       .json({ message: "Something went wrong!", success: false });
   }
 }
+
+export async function getAvaliableDonors(req: Request, res: Response) {
+  const { pageSize, pageNumber, search } = req.query;
+
+  const userId = req.user.id;
+
+  const skip =
+    (parseInt(pageNumber as string) - 1) * parseInt(pageSize as string);
+  const take = parseInt(pageSize as string);
+
+  const fourMonthsAgo = new Date();
+  fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
+  fourMonthsAgo.setHours(0, 0, 0, 0);
+
+  const avaliableDonorsFindOptions: Prisma.DonorFindManyArgs = {
+    where: {
+      userId,
+      donations: { some: { lastDate: { lte: fourMonthsAgo } } },
+    },
+    orderBy: [{ createdAt: "desc" }],
+  };
+
+  const totalCountFindOptions: Prisma.DonorCountArgs = {
+    where: {
+      userId,
+      donations: { some: { lastDate: { lte: fourMonthsAgo } } },
+      name: {
+        contains: search as string,
+      },
+    },
+  };
+
+  if (typeof skip === "number" && skip > 0) {
+    avaliableDonorsFindOptions.skip = skip;
+  }
+  if (take) {
+    avaliableDonorsFindOptions.take = take;
+  }
+
+  if (search) {
+    avaliableDonorsFindOptions.where.name = {
+      contains: search as string,
+    };
+  }
+
+  try {
+    const avaliableDonors = await prisma.donor.findMany(
+      avaliableDonorsFindOptions
+    );
+
+    const totalCount = await prisma.donor.count(totalCountFindOptions);
+
+    const pageCount = Math.ceil(totalCount / take);
+
+    return res
+      .status(200)
+      .json({ donors: avaliableDonors, pageCount, sucess: true });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Something went wrong!", success: false });
+  }
+}
