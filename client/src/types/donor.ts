@@ -19,10 +19,11 @@ export interface CreateDonor {
 }
 
 export interface UpdateDonor {
+  name: string;
   bloodType: string;
   phone: string;
   address: string;
-  dob: Date;
+  dob: string;
 }
 
 export interface GetDonorProps {
