@@ -90,19 +90,29 @@ export async function getDonation(req: Request, res: Response) {
 }
 
 export async function getDonorsForDonations(req: Request, res: Response) {
+  const { search } = req.query;
+
   const userId = req.user.id;
 
+  const donorFindOptions: Prisma.DonorFindManyArgs = {
+    where: { userId },
+    select: {
+      id: true,
+      name: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  };
+
+  if (search) {
+    donorFindOptions.where.name = {
+      contains: search as string,
+    };
+  }
+
   try {
-    const donors = await prisma.donor.findMany({
-      where: { userId },
-      select: {
-        id: true,
-        name: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const donors = await prisma.donor.findMany(donorFindOptions);
 
     return res.status(200).json({ donors, success: true });
   } catch (error) {
