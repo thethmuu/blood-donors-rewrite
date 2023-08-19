@@ -93,6 +93,10 @@ export const validateAddDonationFields = checkSchema({
     notEmpty: true,
     isInt: { options: { min: 1 } },
   },
+  count: {
+    notEmpty: true,
+    isInt: { options: { min: 1 } },
+  },
 });
 
 export const validateUpdateDonationFields = checkSchema({
@@ -101,6 +105,10 @@ export const validateUpdateDonationFields = checkSchema({
     isISO8601: true,
   },
   donorId: {
+    optional: true,
+    isInt: { options: { min: 1 } },
+  },
+  count: {
     optional: true,
     isInt: { options: { min: 1 } },
   },
