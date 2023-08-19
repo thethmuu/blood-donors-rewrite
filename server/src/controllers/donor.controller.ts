@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import prisma from "../libs/prisma";
 import { Prisma } from "@prisma/client";
+import isAvailable, { DonorProps } from "../utils/isAvaliable";
 export async function getDonors(req: Request, res: Response) {
   const { pageSize, pageNumber, search, bloodType } = req.query;
 
@@ -188,20 +189,21 @@ export async function getAvaliableDonors(req: Request, res: Response) {
 
   const userId = req.user.id;
 
-  const skip =
+  const startIndex =
     (parseInt(pageNumber as string) - 1) * parseInt(pageSize as string);
-  const take = parseInt(pageSize as string);
+  const endIndex = startIndex + parseInt(pageSize as string);
 
   const fourMonthsAgo = new Date();
   fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
-  fourMonthsAgo.setUTCHours(0, 0, 0, 0);
+  fourMonthsAgo.setHours(0, 0, 0, 0);
 
-  const avaliableDonorsFindOptions: Prisma.DonorFindManyArgs = {
+  const donorsWithDonationsFindOptions: Prisma.DonorFindManyArgs = {
     where: {
       userId,
-      donations: { some: { lastDate: { lte: fourMonthsAgo } } },
+      donations: { some: { count: { gt: 0 } } },
     },
     orderBy: [{ createdAt: "desc" }],
+    include: { donations: true },
   };
 
   const totalCountFindOptions: Prisma.DonorCountArgs = {
@@ -214,36 +216,42 @@ export async function getAvaliableDonors(req: Request, res: Response) {
     },
   };
 
-  if (typeof skip === "number" && skip > 0) {
-    avaliableDonorsFindOptions.skip = skip;
-  }
-  if (take) {
-    avaliableDonorsFindOptions.take = take;
-  }
-
   if (search) {
-    avaliableDonorsFindOptions.where.name = {
+    donorsWithDonationsFindOptions.where.name = {
       contains: search as string,
     };
   }
 
   if (bloodType) {
-    avaliableDonorsFindOptions.where.bloodType = bloodType as string;
+    donorsWithDonationsFindOptions.where.bloodType = bloodType as string;
     totalCountFindOptions.where.bloodType = bloodType as string;
   }
 
+  const avaliableDonors = [];
+
   try {
-    const avaliableDonors = await prisma.donor.findMany(
-      avaliableDonorsFindOptions
+    const donorsWithDonations = await prisma.donor.findMany(
+      donorsWithDonationsFindOptions
     );
 
-    const totalCount = await prisma.donor.count(totalCountFindOptions);
+    for (const donor of donorsWithDonations) {
+      if (isAvailable(donor as DonorProps)) {
+        avaliableDonors.push(donor);
+      }
+    }
 
-    const pageCount = Math.ceil(totalCount / take);
+    const paginatedAvaliableDonors = avaliableDonors.slice(
+      startIndex,
+      endIndex
+    );
+
+    const pageCount = Math.ceil(
+      avaliableDonors.length / parseInt(pageSize as string)
+    );
 
     return res
       .status(200)
-      .json({ donors: avaliableDonors, pageCount, sucess: true });
+      .json({ donors: paginatedAvaliableDonors, pageCount, sucess: true });
   } catch (error) {
     return res
       .status(500)
