@@ -109,12 +109,21 @@ export async function getDonorsForDonations(req: Request, res: Response) {
     donorFindOptions.where.name = {
       contains: search as string,
     };
+  } else {
+    return res.status(200).json({ donors: [], success: true });
   }
 
   try {
     const donors = await prisma.donor.findMany(donorFindOptions);
 
-    return res.status(200).json({ donors, success: true });
+    const formattedDonors = donors.map(
+      ({ id, name }: { id: number; name: string }) => ({
+        value: id,
+        label: name,
+      })
+    );
+
+    return res.status(200).json({ donors: formattedDonors, success: true });
   } catch (error) {
     return res
       .status(500)

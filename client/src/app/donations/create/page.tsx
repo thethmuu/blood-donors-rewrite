@@ -3,10 +3,7 @@ import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
-import Select from "react-select";
-
-import useDonorsForDonation from "@/hooks/donations/useDonorsForDonation";
-
+import AsyncSelect from "react-select/async";
 import { Loader2 } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
 import { Button } from "@/components/ui/button";
@@ -19,29 +16,28 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import Loading from "@/components/Loading";
 import useCreateDonation from "@/hooks/donations/useCreateDonation";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import getDonorsForDonation from "@/services/donations/getDonorsForDonation";
+import useIsMounted from "@/hooks/useIsMounted";
+import { format } from "date-fns";
 
-interface donorProps {
+interface DonorProps {
   value: number;
   label: string;
 }
 
 const donationCreateSchema = z.object({
-  lastDate: z.string().nonempty({ message: "Last date is required!" }),
-  donorId: z.number({ required_error: "Please select a donor." }),
+  lastDate: z.date(),
+  count: z.number().nonnegative().min(1, "Count must be greater than zero!"),
+  donor: z.object({ value: z.number(), label: z.string() }),
 });
 
 const DonationCreate = () => {
-  const [donorsOptions, setDonorsOptions] = useState<donorProps[]>([]);
-  const {
-    data,
-    isLoading: donorsLoading,
-    isSuccess: donorsSuccess,
-  } = useDonorsForDonation();
+  const isMounted = useIsMounted();
+
   const {
     mutate,
     isSuccess: donationSuccess,
@@ -56,24 +52,26 @@ const DonationCreate = () => {
     resolver: zodResolver(donationCreateSchema),
   });
 
-  function onSubmit(values: z.infer<typeof donationCreateSchema>) {
-    const { donorId, lastDate } = values;
-    const lastDateInISOFormat = new Date(lastDate).toISOString();
-    const formData = { donorId, lastDate: lastDateInISOFormat };
-    mutate(formData);
+  const donor = form.watch("donor");
+
+  function onDonorChange(value: DonorProps) {
+    form.setValue("donor", value, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
   }
 
-  useEffect(() => {
-    if (donorsSuccess) {
-      const formattedDonorOptions = data.donors.map(
-        ({ id, name }: { id: number; name: string }) => ({
-          value: id,
-          label: name,
-        })
-      );
-      setDonorsOptions(formattedDonorOptions);
-    }
-  }, [donorsSuccess]);
+  function onSubmit(values: z.infer<typeof donationCreateSchema>) {
+    const { donor, lastDate, count } = values;
+    const lastDateInISOFormat = new Date(lastDate).toISOString();
+    const formData = {
+      donorId: donor.value,
+      lastDate: lastDateInISOFormat,
+      count,
+    };
+    mutate(formData);
+  }
 
   useEffect(() => {
     if (donationSuccess) {
@@ -91,10 +89,15 @@ const DonationCreate = () => {
         title: (error as Error).message,
       });
     }
-  }, [donationSuccess, donationError, error, toast, router, data]);
+  }, [donationSuccess, donationError, error, toast, router]);
 
-  if (donorsLoading) {
-    return <Loading />;
+  const promiseOptions = async (search: string) => {
+    const data = await getDonorsForDonation(search);
+    return data.donors;
+  };
+
+  if (!isMounted) {
+    return null;
   }
 
   return (
@@ -106,45 +109,57 @@ const DonationCreate = () => {
             <div className="flex flex-col gap-4 mb-8">
               <Label
                 className={`font-semibold ${
-                  form.formState.errors.donorId ? "text-destructive" : null
+                  form.formState.errors.donor ? "text-destructive" : null
                 }`}
               >
                 လှူဒါန်းသူ
               </Label>
-              <Controller
-                rules={{ required: true }}
-                control={form.control}
-                name="donorId"
-                render={({ field }) => (
-                  <Select
-                    options={donorsOptions}
-                    placeholder="Select a donor..."
-                    value={donorsOptions.find(
-                      ({ value }) => value === field.value
-                    )}
-                    onChange={(val) => field.onChange(val?.value)}
-                    classNames={{
-                      control: () => "px-3 py-1 border border-input",
-                    }}
-                    theme={(theme) => ({
-                      ...theme,
-                      borderRadius: 12,
-                      colors: {
-                        ...theme.colors,
-                        primary: "#e11d48",
-                        primary25: "rgba(225, 29, 72, 0.25)",
-                      },
-                    })}
-                    isClearable
-                  />
-                )}
+              <AsyncSelect
+                loadOptions={promiseOptions}
+                placeholder="Select a donor..."
+                value={donor}
+                onChange={(value) => {
+                  onDonorChange(value as DonorProps);
+                }}
+                classNames={{
+                  control: () => "px-3 py-1 border border-input",
+                }}
+                theme={(theme) => ({
+                  ...theme,
+                  borderRadius: 12,
+                  colors: {
+                    ...theme.colors,
+                    primary: "#e11d48",
+                    primary25: "rgba(225, 29, 72, 0.25)",
+                  },
+                })}
+                isClearable
+                noOptionsMessage={() => "Please search to select donor."}
               />
-              {form.formState.errors.donorId ? (
+              {form.formState.errors.donor ? (
                 <span className="text-sm text-destructive">
-                  {form.formState.errors.donorId.message}
+                  Donor is required!
                 </span>
               ) : null}
             </div>
+            {/* Count */}
+            <FormField
+              control={form.control}
+              name="count"
+              render={() => (
+                <FormItem className="w-full mb-8 space-y-4">
+                  <FormLabel className="font-semibold">အကြိမ်မြောက်</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...form.register("count", { valueAsNumber: true })}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             {/* Last Date */}
             <FormField
               control={form.control}
@@ -155,7 +170,11 @@ const DonationCreate = () => {
                     နောက်ဆုံးလှူသည့်ရက်စွဲ (လ-ရက်-နှစ်)
                   </FormLabel>
                   <FormControl>
-                    <Input type="date" {...form.register("lastDate")} />
+                    <Input
+                      type="date"
+                      {...form.register("lastDate", { valueAsDate: true })}
+                      defaultValue={format(new Date(), "yyyy-MM-dd")}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
