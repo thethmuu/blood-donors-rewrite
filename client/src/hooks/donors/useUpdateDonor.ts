@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import updateDonor from "@/services/donors/updateDonor";
 
 const useUpdateDonor = () => {
-  useMutation(updateDonor);
+  return useMutation(updateDonor);
 };
 
 export default useUpdateDonor;
