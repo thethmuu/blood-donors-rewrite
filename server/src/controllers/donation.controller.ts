@@ -138,6 +138,15 @@ export async function addDonation(req: Request, res: Response) {
       .status(201)
       .json({ message: "Donation created successfully!", success: true });
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return res.status(409).json({
+          message: "Last date already exists for this donor!",
+          success: false,
+        });
+      }
+    }
+
     return res
       .status(500)
       .json({ message: "Something went wrong!", success: false });
@@ -190,6 +199,15 @@ export async function updateDonation(req: Request, res: Response) {
       .status(200)
       .json({ message: "Donation updated successfully!", success: true });
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return res.status(409).json({
+          message: "Last date already exists for this donor!",
+          success: false,
+        });
+      }
+    }
+
     return res
       .status(500)
       .json({ message: "Something went wrong!", success: false });

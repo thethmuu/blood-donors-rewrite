@@ -56,7 +56,7 @@ model Donor {
 
 model Donation {
   id       Int      @id @default(autoincrement())
-  lastDate DateTime
+  lastDate DateTime 
   count    Int @default(0)
 
   donorId Int
@@ -64,6 +64,8 @@ model Donation {
 
   userId    Int
   user      User       @relation(fields: [userId], references: [id])
+
+  @@unique([donorId,lastDate])
 
 
   createdAt DateTime @default(now())
