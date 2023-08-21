@@ -112,7 +112,6 @@ export async function getDonorsForDonations(req: Request, res: Response) {
   } else {
     return res.status(200).json({ donors: [], success: true });
   }
-
   try {
     const donors = await prisma.donor.findMany(donorFindOptions);
 
