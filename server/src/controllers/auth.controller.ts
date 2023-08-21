@@ -10,7 +10,7 @@ export async function registerUser(req: Request, res: Response) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { name, email, password } = req.body;
+  const { name, email, password, phone } = req.body;
 
   const user = await prisma.user.findUnique({ where: { email } });
 
@@ -25,7 +25,7 @@ export async function registerUser(req: Request, res: Response) {
 
   try {
     await prisma.user.create({
-      data: { name, email, hashedPassword },
+      data: { name, email, hashedPassword, phone },
     });
 
     return res

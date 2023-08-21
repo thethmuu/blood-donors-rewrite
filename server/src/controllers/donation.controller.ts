@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import prisma from "../libs/prisma";
 import { Prisma } from "@prisma/client";
+import isAvailable from "../utils/isAvaliable";
+
 export async function getDonations(req: Request, res: Response) {
   const { pageNumber, pageSize, search } = req.query;
 
@@ -88,21 +90,40 @@ export async function getDonation(req: Request, res: Response) {
 }
 
 export async function getDonorsForDonations(req: Request, res: Response) {
+  const { search } = req.query;
+
   const userId = req.user.id;
 
-  try {
-    const donors = await prisma.donor.findMany({
-      where: { userId },
-      select: {
-        id: true,
-        name: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+  const donorFindOptions: Prisma.DonorFindManyArgs = {
+    where: { userId },
+    select: {
+      id: true,
+      name: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  };
 
-    return res.status(200).json({ donors, success: true });
+  if (search) {
+    donorFindOptions.where.name = {
+      contains: search as string,
+    };
+  } else {
+    return res.status(200).json({ donors: [], success: true });
+  }
+
+  try {
+    const donors = await prisma.donor.findMany(donorFindOptions);
+
+    const formattedDonors = donors.map(
+      ({ id, name }: { id: number; name: string }) => ({
+        value: id,
+        label: name,
+      })
+    );
+
+    return res.status(200).json({ donors: formattedDonors, success: true });
   } catch (error) {
     return res
       .status(500)
@@ -117,18 +138,14 @@ export async function addDonation(req: Request, res: Response) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { lastDate, donorId } = req.body;
+  const { lastDate, donorId, count } = req.body;
   const userId = req.user.id;
-
-  const previousCount = await prisma.donation.count({ where: { donorId } });
-
-  const currentCount = previousCount + 1;
 
   try {
     await prisma.donation.create({
       data: {
         donorId,
-        count: currentCount,
+        count,
         userId,
         lastDate,
       },
@@ -166,30 +183,14 @@ export async function updateDonation(req: Request, res: Response) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { lastDate, donorId: newDonorId } = req.body;
+  const { lastDate, donorId, count } = req.body;
   const userId = req.user.id;
 
-  const { donorId: previousDonorId, count: previousDonorCount } =
-    await prisma.donation.findUnique({
-      where: { id: parseInt(id) },
-    });
-
-  let count: number;
-
   try {
-    if (newDonorId !== previousDonorId) {
-      const newDonorPreviousCount = await prisma.donation.count({
-        where: { donorId: newDonorId },
-      });
-      count = newDonorPreviousCount + 1;
-    } else {
-      count = previousDonorCount;
-    }
-
     await prisma.donation.update({
       where: { id: parseInt(id) },
       data: {
-        donorId: newDonorId,
+        donorId,
         count,
         userId,
         lastDate,

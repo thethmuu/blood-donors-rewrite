@@ -35,6 +35,7 @@ async function createUser(userData: userDataProps) {
       email: userData.email,
       name: userData.name,
       hashedPassword,
+      phone: "09769035912",
     },
   });
 

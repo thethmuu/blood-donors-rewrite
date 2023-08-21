@@ -1,8 +1,10 @@
 import { authenticatedRequest } from "@/libs/axios";
 
-const getDonorsForDonation = async () => {
+const getDonorsForDonation = async (search: string) => {
   try {
-    const response = await authenticatedRequest("/donations/donors");
+    const response = await authenticatedRequest(
+      `/donations/donors?search=${search}`
+    );
 
     return response.data;
   } catch (error: any) {
