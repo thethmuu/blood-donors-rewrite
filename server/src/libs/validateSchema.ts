@@ -11,6 +11,10 @@ export const validateRegisterUserFields = checkSchema({
     notEmpty: true,
     isEmail: true,
   },
+  phone: {
+    notEmpty: true,
+    isString: true,
+  },
   password: {
     notEmpty: true,
     isLength: {

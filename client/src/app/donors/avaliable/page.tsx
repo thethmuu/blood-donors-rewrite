@@ -44,12 +44,6 @@ const AvaliableDonor = () => {
     setCurrentPage(1);
   };
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  console.log(data);
-
   return (
     <section className="py-5 overflow-y-auto sm:py-10 grow">
       <div className="container space-y-6">
