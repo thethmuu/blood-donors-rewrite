@@ -17,7 +17,7 @@ const LinkItem = ({ item }: LinkItemProps) => {
   return (
     <Link
       href={item.src}
-      className={`text-sm font-semibold transition hover:text-black/90 ${
+      className={`text-sm font-medium transition hover:text-black/90 ${
         currentPath === item.src ? "text-black/90" : ""
       }`}
     >

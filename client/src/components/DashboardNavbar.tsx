@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "./ui/button";
 import LinkItem from "./LinkItem";
 import useLogout from "@/hooks/auth/useLogout";
 import { useToast } from "./ui/use-toast";
-import Link from "next/link";
+import Sidebar from "./Sidebar";
 
 const Links = [
   { name: "အလှူရှင်အားလုံး", src: "/donors" },
@@ -15,9 +16,14 @@ const Links = [
 ];
 
 const DashboardNavbar = () => {
+  const currentPath = usePathname();
   const router = useRouter();
   const { toast } = useToast();
   const { mutate, isLoading, isSuccess, isError, error } = useLogout();
+
+  const currentPathName = Links.find((item) => {
+    return item.src === currentPath;
+  });
 
   useEffect(() => {
     if (isSuccess) {
@@ -35,11 +41,22 @@ const DashboardNavbar = () => {
   return (
     <nav className="h-20 min-h-[5rem] text-white bg-primary">
       <div className="container flex items-center justify-between h-full mx-auto">
-        <Link href={"/"} className="text-2xl font-semibold">
+        <aside className="flex md:hidden">
+          <Sidebar navItems={Links} mutate={mutate} />
+        </aside>
+
+        <Link
+          href={"/"}
+          className="text-xl font-semibold text-center w-fit md:w-fit md:text-2xl"
+        >
           Blood Donors
         </Link>
 
-        <div className="flex items-center gap-5">
+        <p className="block text-sm font-medium md:hidden">
+          {currentPathName?.name}
+        </p>
+
+        <div className="items-center hidden gap-5 md:flex">
           {Links.map((item) => (
             <LinkItem key={item.src} item={item} />
           ))}
