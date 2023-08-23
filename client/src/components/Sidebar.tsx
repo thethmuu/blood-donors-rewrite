@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sheet";
 
 import useIsMounted from "@/hooks/useIsMounted";
+import useProfile from "@/hooks/profile/useProfile";
 
 interface SidebarProps {
   navItems: {
@@ -32,7 +33,9 @@ const Sidebar = ({ navItems, mutate }: SidebarProps) => {
   const currentPath = usePathname();
   const isMounted = useIsMounted();
 
-  if (!isMounted) {
+  const { data, isLoading } = useProfile();
+
+  if (!isMounted || isLoading) {
     return;
   }
 
@@ -44,8 +47,8 @@ const Sidebar = ({ navItems, mutate }: SidebarProps) => {
       <SheetContent className="bg-primary/80" side={"left"}>
         <SheetHeader className="flex flex-col items-center mt-5 text-sm font-medium text-white">
           <UserCircle size={50} />
-          <p>Admin</p>
-          <p>admin@gmail.com</p>
+          <p>{data.profile.name}</p>
+          <p>{data.profile.email}</p>
         </SheetHeader>
 
         <Separator className="w-full h-0.5 bg-white my-5" />

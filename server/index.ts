@@ -6,6 +6,7 @@ import cron from "node-cron";
 import donorRouter from "./src/routes/donor.route";
 import donationRouter from "./src/routes/donation.route";
 import authRouter from "./src/routes/auth.route";
+import profileRouter from "./src/routes/profile.route";
 import checkAuth from "./src/middlewares/checkAuth";
 import handleCronJob from "./src/libs/handleCronJob";
 
@@ -19,6 +20,8 @@ app.use(express.json());
 app.use("/api/donors", checkAuth, donorRouter);
 
 app.use("/api/donations", checkAuth, donationRouter);
+
+app.use("/api/profile", checkAuth, profileRouter);
 
 app.use("/api/auth", authRouter);
 
