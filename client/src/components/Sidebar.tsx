@@ -33,7 +33,7 @@ const Sidebar = ({ navItems, mutate }: SidebarProps) => {
   const isMounted = useIsMounted();
 
   if (!isMounted) {
-    return;
+    return <Menu />;
   }
 
   return (
@@ -76,7 +76,7 @@ const Sidebar = ({ navItems, mutate }: SidebarProps) => {
         <SheetFooter>
           <Button
             onClick={() => mutate()}
-            className="font-semibold text-black bg-secondary hover:bg-secondary/90"
+            className="w-full text-black transition-all bg-white hover:bg-white/90"
           >
             Logout
           </Button>
