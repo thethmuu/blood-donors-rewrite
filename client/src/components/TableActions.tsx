@@ -61,7 +61,7 @@ const TableActions = ({
   }
 
   return (
-    <section className="flex flex-col items-center justify-between gap-3 sm:gap-0 sm:flex-row">
+    <section className="flex flex-col items-center justify-between gap-3 md:gap-0 md:flex-row">
       <div className="flex items-center gap-2 w-fit">
         <p className="text-xs font-semibold text-primary/60">Show</p>
         <ShadSelect
@@ -91,7 +91,7 @@ const TableActions = ({
         <p className="text-xs font-semibold text-primary/60">entries</p>
       </div>
 
-      <div className="flex flex-col items-center gap-2 sm:flex-row">
+      <div className="flex flex-col items-center gap-2 md:flex-row">
         <Input
           value={searchData}
           onChange={(e) => setSearchData(e.target.value)}

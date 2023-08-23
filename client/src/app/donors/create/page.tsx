@@ -106,8 +106,8 @@ const CreateDonor = () => {
   }
 
   return (
-    <section className="overflow-y-auto grow">
-      <div className="container min-h-full py-5 md:py-10">
+    <section className="py-5 overflow-y-auto md:py-10 grow">
+      <div className="container space-y-6">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -221,7 +221,7 @@ const CreateDonor = () => {
               ) : null}
             </div>
 
-            <Button type="submit" className="text-sm font-semibold w-fit">
+            <Button type="submit" className="ml-auto text-sm w-fit">
               {isLoading ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : null}

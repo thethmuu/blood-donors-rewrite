@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 import { Button } from "./ui/button";
 import LinkItem from "./LinkItem";
@@ -47,7 +48,7 @@ const DashboardNavbar = () => {
 
         <Link
           href={"/"}
-          className="text-xl font-semibold text-center w-fit md:w-fit md:text-2xl"
+          className="text-xl font-semibold text-center w-fit md:w-fit"
         >
           Blood Donors
         </Link>
@@ -56,16 +57,16 @@ const DashboardNavbar = () => {
           {currentPathName?.name}
         </p>
 
-        <div className="items-center hidden gap-5 md:flex">
+        <div className="items-center hidden gap-4 md:flex">
           {Links.map((item) => (
             <LinkItem key={item.src} item={item} />
           ))}
 
           <Button
             onClick={() => mutate()}
-            className="font-semibold text-black bg-secondary hover:bg-secondary/90"
+            className="text-black transition-all bg-white hover:bg-white/90"
           >
-            Logout
+            <LogOut />
           </Button>
         </div>
       </div>
