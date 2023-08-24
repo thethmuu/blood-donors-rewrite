@@ -101,8 +101,8 @@ const DonationCreate = () => {
   }
 
   return (
-    <section className="overflow-y-auto grow">
-      <div className="container flex flex-col py-10 ">
+    <section className="py-5 overflow-y-auto md:py-10 grow">
+      <div className="container space-y-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             {/* Donor Select */}
@@ -184,7 +184,7 @@ const DonationCreate = () => {
             <Button
               type="submit"
               variant={"outline"}
-              className="mt-8 text-sm font-semibold ml-auto block bg-[#e11d48] text-white hover:bg-[#e11d48]/90 hover:text-white"
+              className="mt-8 text-sm ml-auto block bg-[#e11d48] text-white hover:bg-[#e11d48]/90 hover:text-white"
               disabled={donationLoading}
             >
               <div className="flex items-center">
