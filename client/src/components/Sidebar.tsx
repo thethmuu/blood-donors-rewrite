@@ -38,7 +38,6 @@ const Sidebar = ({ navItems, mutate }: SidebarProps) => {
 
   if (!isMounted || isLoading) {
     return;
-
   }
 
   return (
