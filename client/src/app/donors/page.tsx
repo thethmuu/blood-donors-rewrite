@@ -45,7 +45,7 @@ const Dashboard = () => {
   };
 
   return (
-    <section className="py-5 overflow-y-auto sm:py-10 grow">
+    <section className="py-5 overflow-y-auto md:py-10 grow">
       <div className="container space-y-6">
         <TableActions
           handlePageSizeChange={handlePageSizeChange}

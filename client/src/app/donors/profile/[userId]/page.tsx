@@ -44,8 +44,8 @@ const Profile = () => {
   }
 
   return (
-    <section className="overflow-y-auto grow">
-      <div className="container flex flex-col justify-between min-h-full py-5 shadow-md md:py-10">
+    <section className="py-5 overflow-y-auto md:py-10 grow">
+      <div className="container space-y-6">
         <h2 className="text-2xl font-semibold text-primary">
           {data.donor.name}
         </h2>
@@ -128,6 +128,7 @@ const Profile = () => {
 
         <div className="flex items-center justify-end gap-4">
           <Button
+            variant={"outline"}
             onClick={() => {
               router.back();
             }}
@@ -139,7 +140,6 @@ const Profile = () => {
             onClick={() => {
               router.push(`/donors/edit/${userId}`);
             }}
-            variant={"outline"}
           >
             Edit
           </Button>
