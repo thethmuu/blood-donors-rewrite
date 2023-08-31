@@ -10,10 +10,18 @@ import formatDate from "@/libs/formatDate";
 
 import useDonor from "@/hooks/donors/useDonor";
 import { Button } from "@/components/ui/button";
+import useLogout from "@/hooks/auth/useLogout";
+import SessionExpireModal from "@/components/SessionExpireModal";
 
 const Profile = () => {
   const currentPath = usePathname();
   const router = useRouter();
+
+  const {
+    mutate,
+    isLoading: logoutLoading,
+    isSuccess: logoutSuccess,
+  } = useLogout();
 
   const userId = currentPath.split("/").pop() || "";
   const [lastDonationDate, setLastDonationDate] = useState("");
@@ -39,8 +47,18 @@ const Profile = () => {
     }
   }, [isSuccess, data]);
 
+  useEffect(() => {
+    if (logoutSuccess) {
+      router.push("/login");
+    }
+  }, [logoutSuccess]);
+
   if (isLoading) {
     return <Loading />;
+  }
+
+  if (isError && !isLoading) {
+    return <SessionExpireModal logoutLoading={logoutLoading} mutate={mutate} />;
   }
 
   return (

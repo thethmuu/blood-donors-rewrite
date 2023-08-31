@@ -20,7 +20,9 @@ const checkAuth = (req: Request, res: Response, next: NextFunction) => {
   const { token } = req.cookies;
 
   if (!token) {
-    return res.status(401).json({ message: "Unauthorized!", success: false });
+    return res
+      .status(401)
+      .json({ message: "Unauthorized! Logout and try again!", success: false });
   }
 
   const user = verify(token, process.env.SECRET as string);

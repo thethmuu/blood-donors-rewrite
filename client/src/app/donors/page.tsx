@@ -1,16 +1,22 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 import Loading from "@/components/Loading";
 import { DataTable } from "@/components/data-table";
 import { columns } from "@/components/donors/columns";
 import Pagination from "@/components/Pagination";
 import TableActions from "@/components/TableActions";
+import { Button } from "@/components/ui/button";
 
 import useDonors from "@/hooks/donors/useDonors";
+import useLogout from "@/hooks/auth/useLogout";
+import SessionExpireModal from "@/components/SessionExpireModal";
 
 const Dashboard = () => {
+  const router = useRouter();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
   const [pageSize, setpageSize] = useState(10);
@@ -24,11 +30,23 @@ const Dashboard = () => {
     bloodType,
   });
 
+  const {
+    mutate,
+    isLoading: logoutLoading,
+    isSuccess: logoutSuccess,
+  } = useLogout();
+
   useEffect(() => {
     if (isSuccess) {
       setPageCount(data.pageCount);
     }
-  }, [isSuccess, pageCount, currentPage, data]);
+  }, [isError, isLoading, isSuccess, pageCount, currentPage, data]);
+
+  useEffect(() => {
+    if (logoutSuccess) {
+      router.push("/login");
+    }
+  }, [logoutSuccess]);
 
   const handlePageChange = (currentPage: number) => {
     setCurrentPage(currentPage);
@@ -43,6 +61,10 @@ const Dashboard = () => {
     setpageSize(e);
     setCurrentPage(1);
   };
+
+  if (isError && !isLoading) {
+    return <SessionExpireModal logoutLoading={logoutLoading} mutate={mutate} />;
+  }
 
   return (
     <section className="py-5 overflow-y-auto md:py-10 grow">

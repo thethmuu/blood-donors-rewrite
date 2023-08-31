@@ -72,7 +72,7 @@ const CreateDonor = () => {
   useEffect(() => {
     if (isSuccess) {
       toast({
-        description: "Successfully created!",
+        description: "အလှူရှင်အသစ် ထည့်ပြီးပါပြီ။",
       });
 
       router.push("/donors");
@@ -88,7 +88,6 @@ const CreateDonor = () => {
 
   const onSubmit = (values: z.infer<typeof createFormSchema>) => {
     const { name, address, dob, phone, bloodType } = values;
-    console.log(dob);
 
     const dobInISOFormat = new Date(dob).toISOString();
 

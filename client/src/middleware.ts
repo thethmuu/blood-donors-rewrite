@@ -10,7 +10,7 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (!token && (path === "/donors" || path === "/donations")) {
+  if (!token && (path.startsWith("/donors") || path.startsWith("/donations"))) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
@@ -22,8 +22,6 @@ export default async function middleware(req: NextRequest) {
     const decode = jwtDecode<JwtPayload>(token.value as string);
 
     if (decode.exp && decode.exp * 1000 <= Date.now()) {
-      console.log("time to logout");
-
       req.cookies.delete("token");
 
       return NextResponse.redirect(new URL("/login", req.url));
@@ -32,3 +30,7 @@ export default async function middleware(req: NextRequest) {
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: ["/donors/:path*", "/donations/:path*"],
+};
