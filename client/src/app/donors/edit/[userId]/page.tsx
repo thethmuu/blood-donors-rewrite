@@ -24,6 +24,9 @@ import { Label } from "@/components/ui/label";
 import useIsMounted from "@/hooks/useIsMounted";
 import useUpdateDonor from "@/hooks/donors/useUpdateDonor";
 import useDonor from "@/hooks/donors/useDonor";
+import useLogout from "@/hooks/auth/useLogout";
+import SessionExpireModal from "@/components/SessionExpireModal";
+import Loading from "@/components/Loading";
 
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
@@ -79,6 +82,18 @@ const EditDonor = () => {
     error: updateError,
   } = useUpdateDonor();
 
+  const {
+    mutate: logoutMutate,
+    isLoading: logoutLoading,
+    isSuccess: logoutSuccess,
+  } = useLogout();
+
+  useEffect(() => {
+    if (logoutSuccess) {
+      router.push("/login");
+    }
+  }, [logoutSuccess]);
+
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof editFormSchema>>({
@@ -113,7 +128,6 @@ const EditDonor = () => {
 
   const onSubmit = (values: z.infer<typeof editFormSchema>) => {
     const { name, address, dob, phone, bloodType } = values;
-    console.log(dob);
 
     const dobInISOFormat = new Date(dob).toISOString();
 
@@ -127,7 +141,15 @@ const EditDonor = () => {
     return null;
   }
 
-  console.log("helo");
+  if (donorIsLoading) {
+    return <Loading />;
+  }
+
+  if (donorIsError && !donorIsLoading) {
+    return (
+      <SessionExpireModal logoutLoading={logoutLoading} mutate={logoutMutate} />
+    );
+  }
 
   return (
     <section className="py-5 overflow-y-auto md:py-10 grow">
