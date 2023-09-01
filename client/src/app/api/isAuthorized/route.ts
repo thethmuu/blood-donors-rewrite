@@ -13,11 +13,11 @@ export async function GET(req: NextRequest) {
     if (decode.exp && decode.exp * 1000 <= Date.now()) {
       cookies().delete("token");
       NextResponse.redirect(new URL("/login", req.url));
-      return NextResponse.json({ autherized: false });
+      return NextResponse.json({ authorized: false });
     }
 
-    return NextResponse.json({ autherized: true });
+    return NextResponse.json({ authorized: true });
   }
 
-  return NextResponse.json({ autherized: false });
+  return NextResponse.json({ authorized: false });
 }
