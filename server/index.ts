@@ -25,7 +25,7 @@ app.use("/api/profile", checkAuth, profileRouter);
 
 app.use("/api/auth", authRouter);
 
-cron.schedule("0 8 * * *", handleCronJob);
+cron.schedule("30 9 * * *", handleCronJob);
 
 app.listen(process.env.PORT, () => {
   console.log("Server is listening on http://127.0.0.1:5000");
