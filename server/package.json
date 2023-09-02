@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
-  "type": "module",
   "scripts": {
-    "start": "node index",
+    "build": "tsc",
+    "start": "node ./dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index"
   },

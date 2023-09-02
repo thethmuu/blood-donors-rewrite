@@ -8,6 +8,6 @@
     "noUnusedLocals": false,
     "emitDecoratorMetadata": true
   },
-  "include": ["src"],
+  "include": ["src", "index.ts", "prisma"],
   "exclude": ["node_modules"]
 }
